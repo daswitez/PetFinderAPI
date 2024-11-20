@@ -11,17 +11,14 @@ builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
 {
     var connectionString = builder.Configuration.GetValue<string>("MongoDbSettings:ConnectionString");
 
-    // Validar que la cadena de conexión no esté vacía
     if (string.IsNullOrEmpty(connectionString))
     {
         throw new ArgumentNullException("MongoDb connection string is null or empty.");
     }
 
-    // Crear y devolver el cliente de MongoDB
     return new MongoClient(connectionString);
 });
 
-// Obtener la base de datos desde el cliente de MongoDB
 builder.Services.AddScoped(serviceProvider =>
 {
     var client = serviceProvider.GetRequiredService<IMongoClient>();
