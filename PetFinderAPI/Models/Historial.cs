@@ -9,6 +9,7 @@ namespace PetFinderAPI.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
         public string Suministrado { get; set; }
+        public string MascotaPropiaId { get; set; } = null!;
         public DateOnly FechaSuministrado { get; set; } 
     }
 }

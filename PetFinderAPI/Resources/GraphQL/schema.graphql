@@ -47,13 +47,20 @@ type Recordatorio {
   suministrar: String!
   estado: String! # "Pendiente", "Realizado"
   fechaSuministrar: String!
+  mascotaPropiaId: ID!
+  mascota: MascotaPropia!
+  historialId: ID!
+  historial: Historial
 }
 
 type Historial {
   id: ID!
   suministrado: String!
   fechaSuministrado: String!
+  mascotaPropiaId: ID!
+  mascota: MascotaPropia!
 }
+
 
 # Consultas (Queries)
 type Query {
@@ -156,9 +163,12 @@ input RecordatorioInput {
   suministrar: String!
   estado: String!
   fechaSuministrar: String!
+  mascotaPropiaId: ID!
+  historialId: ID!
 }
 
 input HistorialInput {
   suministrado: String!
   fechaSuministrado: String!
+  mascotaPropiaId: ID!
 }

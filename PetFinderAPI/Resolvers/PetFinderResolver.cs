@@ -103,8 +103,15 @@ namespace PetFinderAPI.Resolvers
 
         public async Task<Usuario> UpdateUsuario(string id, UsuarioInput input)
         {
+            var existingUsuario = await _usuarioRepository.GetByIdAsync(id);
+            if (existingUsuario == null)
+            {
+                throw new Exception("Usuario no encontrado");
+            }
+
             var usuario = new Usuario
             {
+                Id = existingUsuario.Id, 
                 Nombre = input.Nombre,
                 Apellido = input.Apellido,
                 Email = input.Email,
@@ -112,9 +119,11 @@ namespace PetFinderAPI.Resolvers
                 Contraseña = input.Contraseña,
                 tipo = input.tipo
             };
+
             await _usuarioRepository.UpdateAsync(id, usuario);
             return usuario;
         }
+
 
         public async Task<bool> DeleteUsuario(string id)
         {
@@ -128,7 +137,8 @@ namespace PetFinderAPI.Resolvers
             {
                 Nombre = input.Nombre,
                 Raza = input.Raza,
-                Sexo = input.Sexo
+                Sexo = input.Sexo,
+                UsuarioId = input.UsuarioId
             };
             await _mascotaRepository.CreateAsync(mascota);
             return mascota;
@@ -136,12 +146,21 @@ namespace PetFinderAPI.Resolvers
 
         public async Task<MascotaPropia> UpdateMascota(string id, MascotaPropiaInput input)
         {
+            var existingMascota = await _mascotaRepository.GetByIdAsync(id);
+            if (existingMascota == null)
+            {
+                throw new Exception("Mascota no encontrada");
+            }
+
             var mascota = new MascotaPropia
             {
+                Id = existingMascota.Id,
                 Nombre = input.Nombre,
                 Raza = input.Raza,
-                Sexo = input.Sexo
+                Sexo = input.Sexo,
+                UsuarioId = input.UsuarioId
             };
+
             await _mascotaRepository.UpdateAsync(id, mascota);
             return mascota;
         }
@@ -165,6 +184,8 @@ namespace PetFinderAPI.Resolvers
                 Sexo = input.Sexo,
                 Foto = input.Foto,
                 Descripcion = input.Descripcion,
+                UsuarioId = input.UsuarioId,
+                UbicacionId = input.UbicacionId,
                 FechaPublicacion = DateTime.UtcNow
             };
             await _publicacionRepository.CreateAsync(publicacion);
@@ -173,8 +194,15 @@ namespace PetFinderAPI.Resolvers
 
         public async Task<Publicacion> UpdatePublicacion(string id, PublicacionInput input)
         {
+            var existingPublicacion = await _publicacionRepository.GetByIdAsync(id);
+            if (existingPublicacion == null)
+            {
+                throw new Exception("Publicación no encontrada");
+            }
+
             var publicacion = new Publicacion
             {
+                Id = existingPublicacion.Id,
                 Estado = input.Estado,
                 Nombre = input.Nombre,
                 Especie = input.Especie,
@@ -184,8 +212,11 @@ namespace PetFinderAPI.Resolvers
                 Sexo = input.Sexo,
                 Foto = input.Foto,
                 Descripcion = input.Descripcion,
-                FechaPublicacion = DateTime.UtcNow
+                UsuarioId = input.UsuarioId,
+                UbicacionId = input.UbicacionId,
+                FechaPublicacion = existingPublicacion.FechaPublicacion 
             };
+
             await _publicacionRepository.UpdateAsync(id, publicacion);
             return publicacion;
         }
@@ -209,11 +240,19 @@ namespace PetFinderAPI.Resolvers
 
         public async Task<Ubicacion> UpdateUbicacion(string id, UbicacionInput input)
         {
+            var existingUbicacion = await _ubicacionRepository.GetByIdAsync(id);
+            if (existingUbicacion == null)
+            {
+                throw new Exception("Ubicación no encontrada");
+            }
+
             var ubicacion = new Ubicacion
             {
+                Id = existingUbicacion.Id,
                 Latitud = input.Latitud,
                 Longitud = input.Longitud
             };
+
             await _ubicacionRepository.UpdateAsync(id, ubicacion);
             return ubicacion;
         }
@@ -230,7 +269,9 @@ namespace PetFinderAPI.Resolvers
             {
                 Suministrar = input.Suministrar,
                 Estado = input.Estado,
-                FechaSuministrar = input.FechaSuministrar
+                FechaSuministrar = input.FechaSuministrar,
+                MascotaPropiaId = input.MascotaPropiaId,
+                HistorialId = input.HistorialId
             };
             await _recordatorioRepository.CreateAsync(recordatorio);
             return recordatorio;
@@ -238,12 +279,22 @@ namespace PetFinderAPI.Resolvers
 
         public async Task<Recordatorio> UpdateRecordatorio(string id, RecordatorioInput input)
         {
+            var existingRecordatorio = await _recordatorioRepository.GetByIdAsync(id);
+            if (existingRecordatorio == null)
+            {
+                throw new Exception("Recordatorio no encontrado");
+            }
+
             var recordatorio = new Recordatorio
             {
+                Id = existingRecordatorio.Id,
                 Suministrar = input.Suministrar,
                 Estado = input.Estado,
-                FechaSuministrar = input.FechaSuministrar
+                FechaSuministrar = input.FechaSuministrar,
+                MascotaPropiaId = input.MascotaPropiaId,
+                HistorialId= input.HistorialId
             };
+
             await _recordatorioRepository.UpdateAsync(id, recordatorio);
             return recordatorio;
         }
@@ -259,7 +310,9 @@ namespace PetFinderAPI.Resolvers
             var historial = new Historial
             {
                 Suministrado = input.Suministrado,
-                FechaSuministrado = input.FechaSuministrado
+                FechaSuministrado = input.FechaSuministrado,
+                MascotaPropiaId = input.MascotaPropiaId
+
             };
             await _historialRepository.CreateAsync(historial);
             return historial;
@@ -267,11 +320,20 @@ namespace PetFinderAPI.Resolvers
 
         public async Task<Historial> UpdateHistorial(string id, Historialnput input)
         {
+            var existingHistorial = await _historialRepository.GetByIdAsync(id);
+            if (existingHistorial == null)
+            {
+                throw new Exception("Historial no encontrado");
+            }
+
             var historial = new Historial
             {
+                Id = existingHistorial.Id,
                 Suministrado = input.Suministrado,
-                FechaSuministrado = input.FechaSuministrado
+                FechaSuministrado = input.FechaSuministrado,
+                MascotaPropiaId = input.MascotaPropiaId
             };
+
             await _historialRepository.UpdateAsync(id, historial);
             return historial;
         }
