@@ -1,0 +1,164 @@
+# Tipos principales
+type Usuario {
+  id: ID!
+  nombre: String!
+  apellido: String!
+  email: String!
+  telefono: String!
+  contraseña: String!
+  tipo: String!
+}
+
+type MascotaPropia {
+  id: ID!
+  nombre: String!
+  raza: String!
+  sexo: String!
+  usuarioId: ID!
+  usuario: Usuario! # Relación con Usuario
+}
+
+type Publicacion {
+  id: ID!
+  usuarioId: ID!
+  ubicacionId: ID!
+  estado: String! # "Perdida", "Encontrada", "Adopción"
+  nombre: String!
+  especie: String!
+  raza: String!
+  color: String!
+  tamanho: String!
+  sexo: String!
+  foto: String
+  descripcion: String!
+  fechaPublicacion: String!
+  usuario: Usuario!
+  ubicacion: Ubicacion!
+}
+
+type Ubicacion {
+  id: ID!
+  latitud: Float!
+  longitud: Float!
+}
+
+type Recordatorio {
+  id: ID!
+  suministrar: String!
+  estado: String! # "Pendiente", "Realizado"
+  fechaSuministrar: String!
+}
+
+type Historial {
+  id: ID!
+  suministrado: String!
+  fechaSuministrado: String!
+}
+
+# Consultas (Queries)
+type Query {
+  # Consultas para usuarios
+  getUsuarios: [Usuario]!
+  getUsuarioById(id: ID!): Usuario
+
+  # Consultas para mascotas
+  getMascotas: [MascotaPropia]!
+  getMascotaById(id: ID!): MascotaPropia
+
+  # Consultas para publicaciones
+  getPublicaciones: [Publicacion]!
+  getPublicacionById(id: ID!): Publicacion
+  getPublicacionesByUsuarioId(usuarioId: ID!): [Publicacion]!
+
+  # Consultas para ubicaciones
+  getUbicaciones: [Ubicacion]!
+  getUbicacionById(id: ID!): Ubicacion
+
+  # Consultas para recordatorios
+  getRecordatorios: [Recordatorio]!
+  getRecordatorioById(id: ID!): Recordatorio
+
+  # Consultas para historiales
+  getHistoriales: [Historial]!
+  getHistorialById(id: ID!): Historial
+}
+
+# Mutaciones (Mutations)
+type Mutation {
+  # Mutaciones para usuarios
+  createUsuario(input: UsuarioInput!): Usuario!
+  updateUsuario(id: ID!, input: UsuarioInput!): Usuario!
+  deleteUsuario(id: ID!): Boolean!
+
+  # Mutaciones para mascotas
+  createMascota(input: MascotaPropiaInput!): MascotaPropia!
+  updateMascota(id: ID!, input: MascotaPropiaInput!): MascotaPropia!
+  deleteMascota(id: ID!): Boolean!
+
+  # Mutaciones para publicaciones
+  createPublicacion(input: PublicacionInput!): Publicacion!
+  updatePublicacion(id: ID!, input: PublicacionInput!): Publicacion!
+  deletePublicacion(id: ID!): Boolean!
+
+  # Mutaciones para ubicaciones
+  createUbicacion(input: UbicacionInput!): Ubicacion!
+  updateUbicacion(id: ID!, input: UbicacionInput!): Ubicacion!
+  deleteUbicacion(id: ID!): Boolean!
+
+  # Mutaciones para recordatorios
+  createRecordatorio(input: RecordatorioInput!): Recordatorio!
+  updateRecordatorio(id: ID!, input: RecordatorioInput!): Recordatorio!
+  deleteRecordatorio(id: ID!): Boolean!
+
+  # Mutaciones para historiales
+  createHistorial(input: HistorialInput!): Historial!
+  updateHistorial(id: ID!, input: HistorialInput!): Historial!
+  deleteHistorial(id: ID!): Boolean!
+}
+
+# Definición de entradas (Inputs)
+input UsuarioInput {
+  nombre: String!
+  apellido: String!
+  email: String!
+  telefono: String!
+  contraseña: String!
+  tipo: String!
+}
+
+input MascotaPropiaInput {
+  nombre: String!
+  raza: String!
+  sexo: String!
+  usuarioId: ID!
+}
+
+input PublicacionInput {
+  usuarioId: ID!
+  ubicacionId: ID!
+  estado: String!
+  nombre: String!
+  especie: String!
+  raza: String!
+  color: String!
+  tamanho: String!
+  sexo: String!
+  foto: String
+  descripcion: String!
+}
+
+input UbicacionInput {
+  latitud: Float!
+  longitud: Float!
+}
+
+input RecordatorioInput {
+  suministrar: String!
+  estado: String!
+  fechaSuministrar: String!
+}
+
+input HistorialInput {
+  suministrado: String!
+  fechaSuministrado: String!
+}
