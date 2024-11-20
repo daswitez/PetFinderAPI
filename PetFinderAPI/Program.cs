@@ -23,7 +23,6 @@ builder.Services.AddScoped(serviceProvider =>
 {
     var client = serviceProvider.GetRequiredService<IMongoClient>();
 
-    // Extraer la base de datos de la cadena de conexión
     var databaseName = new MongoUrl(builder.Configuration.GetValue<string>("MongoDbSettings:ConnectionString")).DatabaseName;
 
     if (string.IsNullOrEmpty(databaseName))
