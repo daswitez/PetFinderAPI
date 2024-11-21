@@ -233,6 +233,122 @@ namespace PetFinderAPI.Resolvers
             await _publicacionRepository.DeleteAsync(id);
             return true;
         }
+        public async Task<Ubicacion> CreateUbicacion(UbicacionInput input)
+        {
+            var ubicacion = new Ubicacion
+            {
+                Latitud = input.Latitud,
+                Longitud = input.Longitud
+            };
+            await _ubicacionRepository.CreateAsync(ubicacion);
+            return ubicacion;
+        }
+
+        public async Task<Ubicacion> UpdateUbicacion(string id, UbicacionInput input)
+        {
+            var existingUbicacion = await _ubicacionRepository.GetByIdAsync(id);
+            if (existingUbicacion == null)
+            {
+                throw new Exception("Ubicación no encontrada");
+            }
+
+            var ubicacion = new Ubicacion
+            {
+                Id = existingUbicacion.Id,
+                Latitud = input.Latitud,
+                Longitud = input.Longitud
+            };
+
+            await _ubicacionRepository.UpdateAsync(id, ubicacion);
+            return ubicacion;
+        }
+
+        public async Task<bool> DeleteUbicacion(string id)
+        {
+            await _ubicacionRepository.DeleteAsync(id);
+            return true;
+        }
+
+        public async Task<Recordatorio> CreateRecordatorio(RecordatorioInput input)
+        {
+            var recordatorio = new Recordatorio
+            {
+                Suministrar = input.Suministrar,
+                Estado = input.Estado,
+                FechaSuministrar = input.FechaSuministrar,
+                MascotaPropiaId = input.MascotaPropiaId,
+                HistorialId = input.HistorialId
+            };
+            await _recordatorioRepository.CreateAsync(recordatorio);
+            return recordatorio;
+        }
+
+        public async Task<Recordatorio> UpdateRecordatorio(string id, RecordatorioInput input)
+        {
+            var existingRecordatorio = await _recordatorioRepository.GetByIdAsync(id);
+            if (existingRecordatorio == null)
+            {
+                throw new Exception("Recordatorio no encontrado");
+            }
+
+            var recordatorio = new Recordatorio
+            {
+                Id = existingRecordatorio.Id,
+                Suministrar = input.Suministrar,
+                Estado = input.Estado,
+                FechaSuministrar = input.FechaSuministrar,
+                MascotaPropiaId = input.MascotaPropiaId,
+                HistorialId = input.HistorialId
+            };
+
+            await _recordatorioRepository.UpdateAsync(id, recordatorio);
+            return recordatorio;
+        }
+
+        public async Task<bool> DeleteRecordatorio(string id)
+        {
+            await _recordatorioRepository.DeleteAsync(id);
+            return true;
+        }
+
+        public async Task<Historial> CreateHistorial(Historialnput input)
+        {
+            var historial = new Historial
+            {
+                Suministrado = input.Suministrado,
+                FechaSuministrado = input.FechaSuministrado,
+                MascotaPropiaId = input.MascotaPropiaId
+
+            };
+            await _historialRepository.CreateAsync(historial);
+            return historial;
+        }
+
+        public async Task<Historial> UpdateHistorial(string id, Historialnput input)
+        {
+            var existingHistorial = await _historialRepository.GetByIdAsync(id);
+            if (existingHistorial == null)
+            {
+                throw new Exception("Historial no encontrado");
+            }
+
+            var historial = new Historial
+            {
+                Id = existingHistorial.Id,
+                Suministrado = input.Suministrado,
+                FechaSuministrado = input.FechaSuministrado,
+                MascotaPropiaId = input.MascotaPropiaId
+            };
+
+            await _historialRepository.UpdateAsync(id, historial);
+            return historial;
+        }
+
+        public async Task<bool> DeleteHistorial(string id)
+        {
+            await _historialRepository.DeleteAsync(id);
+            return true;
+        }
 
         // --- Mutación para Login ---
         public async Task<AuthPayload> Login(LoginInput input)
