@@ -23,7 +23,7 @@ type Publicacion {
   usuarioId: ID!
   ubicacionId: ID!
   estado: String! # "Perdida", "Encontrada", "Adopción"
-  nombre: String!
+  nombre: String
   especie: String!
   raza: String!
   color: String!
@@ -157,7 +157,7 @@ input PublicacionInput {
   usuarioId: ID!
   ubicacionId: ID!
   estado: String!
-  nombre: String!
+  nombre: String
   especie: String!
   raza: String!
   color: String!

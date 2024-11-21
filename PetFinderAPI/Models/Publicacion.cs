@@ -12,7 +12,7 @@ namespace PetFinderAPI.Models
         public string UsuarioId { get; set; } = null!; // Relación con Usuario
         public string UbicacionId { get; set; } = null!; // Relación con Ubicacion
         public string Estado { get; set; } = null!; // "Perdida" o "Adopcion"
-        public string Nombre { get; set; } = null!;
+        public string? Nombre { get; set; }
         public string Especie {  get; set; } = null!;
         public string Raza { get; set; } = null!;
         public string Color { get; set; } = null!;
