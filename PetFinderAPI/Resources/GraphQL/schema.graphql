@@ -61,6 +61,11 @@ type Historial {
   mascota: MascotaPropia!
 }
 
+# Payload para login
+type AuthPayload {
+  token: String
+  usuario: Usuario
+}
 
 # Consultas (Queries)
 type Query {
@@ -92,6 +97,9 @@ type Query {
 
 # Mutaciones (Mutations)
 type Mutation {
+  # Login
+  login(email: String!, password: String!): AuthPayload!
+
   # Mutaciones para usuarios
   createUsuario(input: UsuarioInput!): Usuario!
   updateUsuario(id: ID!, input: UsuarioInput!): Usuario!
@@ -131,6 +139,11 @@ input UsuarioInput {
   telefono: String!
   contraseña: String!
   tipo: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
 }
 
 input MascotaPropiaInput {

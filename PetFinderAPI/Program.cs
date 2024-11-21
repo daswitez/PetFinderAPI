@@ -1,9 +1,11 @@
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using PetFinderAPI.Repositorios;
 using PetFinderAPI.Resolvers;
 using HotChocolate;
 using HotChocolate.AspNetCore;
 using HotChocolate.Data;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +41,6 @@ builder.Services.AddScoped<PublicacionRepository>();
 builder.Services.AddScoped<UbicacionRepository>();
 builder.Services.AddScoped<RecordatorioRepository>();
 builder.Services.AddScoped<HistorialRepository>();
-
 builder.Services.AddScoped<PetFinderResolver>();
 
 builder.Services
@@ -47,7 +48,7 @@ builder.Services
     .AddQueryType<PetFinderResolver>() 
     .AddMutationType<PetFinderResolver>() 
     .AddFiltering() 
-    .AddSorting();  
+    .AddSorting(); 
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -62,7 +63,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<JwtMiddleware>();
+
+
 app.UseAuthorization();
+
 app.MapControllers();
 app.MapGraphQL(); 
 

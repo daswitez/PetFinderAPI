@@ -1,4 +1,8 @@
-﻿using MongoDB.Driver;
+﻿using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Security.Claims;
+using MongoDB.Driver;
 using PetFinderAPI.Models;
 using PetFinderAPI.Repositorios;
 using HotChocolate;
@@ -14,6 +18,10 @@ namespace PetFinderAPI.Resolvers
         private readonly UbicacionRepository _ubicacionRepository;
         private readonly RecordatorioRepository _recordatorioRepository;
         private readonly HistorialRepository _historialRepository;
+
+        private const string JwtSecretKey = "ClaveSuperSeguraYExtendida1234567890"; 
+        private const string JwtIssuer = "PetFinderAPI"; 
+        private const string JwtAudience = "PetFinderApp"; 
 
         public PetFinderResolver(
             UsuarioRepository usuarioRepository,
@@ -111,7 +119,7 @@ namespace PetFinderAPI.Resolvers
 
             var usuario = new Usuario
             {
-                Id = existingUsuario.Id, 
+                Id = existingUsuario.Id,
                 Nombre = input.Nombre,
                 Apellido = input.Apellido,
                 Email = input.Email,
@@ -123,7 +131,6 @@ namespace PetFinderAPI.Resolvers
             await _usuarioRepository.UpdateAsync(id, usuario);
             return usuario;
         }
-
 
         public async Task<bool> DeleteUsuario(string id)
         {
@@ -214,7 +221,7 @@ namespace PetFinderAPI.Resolvers
                 Descripcion = input.Descripcion,
                 UsuarioId = input.UsuarioId,
                 UbicacionId = input.UbicacionId,
-                FechaPublicacion = existingPublicacion.FechaPublicacion 
+                FechaPublicacion = existingPublicacion.FechaPublicacion
             };
 
             await _publicacionRepository.UpdateAsync(id, publicacion);
@@ -227,121 +234,45 @@ namespace PetFinderAPI.Resolvers
             return true;
         }
 
-        public async Task<Ubicacion> CreateUbicacion(UbicacionInput input)
+        // --- Mutación para Login ---
+        public async Task<AuthPayload> Login(LoginInput input)
         {
-            var ubicacion = new Ubicacion
+            var usuario = await _usuarioRepository.GetByEmailAsync(input.Email);
+            if (usuario == null || usuario.Contraseña != input.Password)
             {
-                Latitud = input.Latitud,
-                Longitud = input.Longitud
-            };
-            await _ubicacionRepository.CreateAsync(ubicacion);
-            return ubicacion;
-        }
-
-        public async Task<Ubicacion> UpdateUbicacion(string id, UbicacionInput input)
-        {
-            var existingUbicacion = await _ubicacionRepository.GetByIdAsync(id);
-            if (existingUbicacion == null)
-            {
-                throw new Exception("Ubicación no encontrada");
+                throw new Exception("Credenciales inválidas");
             }
 
-            var ubicacion = new Ubicacion
+            var token = GenerateJwtToken(usuario);
+
+            return new AuthPayload
             {
-                Id = existingUbicacion.Id,
-                Latitud = input.Latitud,
-                Longitud = input.Longitud
+                Token = token,
+                Usuario = usuario
+            };
+        }
+
+        private string GenerateJwtToken(Usuario usuario)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSecretKey));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, usuario.Id),
+                new Claim(JwtRegisteredClaimNames.Email, usuario.Email),
+                new Claim("tipo", usuario.tipo)
             };
 
-            await _ubicacionRepository.UpdateAsync(id, ubicacion);
-            return ubicacion;
-        }
+            var token = new JwtSecurityToken(
+                issuer: JwtIssuer,
+                audience: JwtAudience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(2),
+                signingCredentials: credentials
+            );
 
-        public async Task<bool> DeleteUbicacion(string id)
-        {
-            await _ubicacionRepository.DeleteAsync(id);
-            return true;
-        }
-
-        public async Task<Recordatorio> CreateRecordatorio(RecordatorioInput input)
-        {
-            var recordatorio = new Recordatorio
-            {
-                Suministrar = input.Suministrar,
-                Estado = input.Estado,
-                FechaSuministrar = input.FechaSuministrar,
-                MascotaPropiaId = input.MascotaPropiaId,
-                HistorialId = input.HistorialId
-            };
-            await _recordatorioRepository.CreateAsync(recordatorio);
-            return recordatorio;
-        }
-
-        public async Task<Recordatorio> UpdateRecordatorio(string id, RecordatorioInput input)
-        {
-            var existingRecordatorio = await _recordatorioRepository.GetByIdAsync(id);
-            if (existingRecordatorio == null)
-            {
-                throw new Exception("Recordatorio no encontrado");
-            }
-
-            var recordatorio = new Recordatorio
-            {
-                Id = existingRecordatorio.Id,
-                Suministrar = input.Suministrar,
-                Estado = input.Estado,
-                FechaSuministrar = input.FechaSuministrar,
-                MascotaPropiaId = input.MascotaPropiaId,
-                HistorialId= input.HistorialId
-            };
-
-            await _recordatorioRepository.UpdateAsync(id, recordatorio);
-            return recordatorio;
-        }
-
-        public async Task<bool> DeleteRecordatorio(string id)
-        {
-            await _recordatorioRepository.DeleteAsync(id);
-            return true;
-        }
-
-        public async Task<Historial> CreateHistorial(Historialnput input)
-        {
-            var historial = new Historial
-            {
-                Suministrado = input.Suministrado,
-                FechaSuministrado = input.FechaSuministrado,
-                MascotaPropiaId = input.MascotaPropiaId
-
-            };
-            await _historialRepository.CreateAsync(historial);
-            return historial;
-        }
-
-        public async Task<Historial> UpdateHistorial(string id, Historialnput input)
-        {
-            var existingHistorial = await _historialRepository.GetByIdAsync(id);
-            if (existingHistorial == null)
-            {
-                throw new Exception("Historial no encontrado");
-            }
-
-            var historial = new Historial
-            {
-                Id = existingHistorial.Id,
-                Suministrado = input.Suministrado,
-                FechaSuministrado = input.FechaSuministrado,
-                MascotaPropiaId = input.MascotaPropiaId
-            };
-
-            await _historialRepository.UpdateAsync(id, historial);
-            return historial;
-        }
-
-        public async Task<bool> DeleteHistorial(string id)
-        {
-            await _historialRepository.DeleteAsync(id);
-            return true;
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
