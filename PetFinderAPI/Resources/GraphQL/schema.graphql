@@ -22,15 +22,15 @@ type Publicacion {
   id: ID!
   usuarioId: ID!
   ubicacionId: ID!
-  estado: String! # "Perdida", "Encontrada", "Adopción"
+  estado: String # "Perdida", "Encontrada", "Adopción"
   nombre: String
-  especie: String!
-  raza: String!
-  color: String!
-  tamanho: String!
-  sexo: String!
+  especie: String
+  raza: String
+  color: String
+  tamanho: String
+  sexo: String
   foto: String
-  descripcion: String!
+  descripcion: String
   fechaPublicacion: String!
   usuario: Usuario!
   ubicacion: Ubicacion!
@@ -156,15 +156,15 @@ input MascotaPropiaInput {
 input PublicacionInput {
   usuarioId: ID!
   ubicacionId: ID!
-  estado: String!
+  estado: String
   nombre: String
-  especie: String!
-  raza: String!
-  color: String!
-  tamanho: String!
-  sexo: String!
+  especie: String
+  raza: String
+  color: String
+  tamanho: String
+  sexo: String
   foto: String
-  descripcion: String!
+  descripcion: String
 }
 
 input UbicacionInput {
