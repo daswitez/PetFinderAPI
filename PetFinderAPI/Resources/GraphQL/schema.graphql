@@ -33,7 +33,7 @@ type Publicacion {
   descripcion: String
   fechaPublicacion: String!
   usuario: Usuario!
-  ubicacion: Ubicacion!
+  ubicacion: Ubicacion
 }
 
 type Ubicacion {

@@ -62,8 +62,26 @@ namespace PetFinderAPI.Resolvers
         public async Task<List<Publicacion>> GetPublicaciones() =>
             await _publicacionRepository.GetAllAsync();
 
-        public async Task<Publicacion> GetPublicacionById(string id) =>
-            await _publicacionRepository.GetByIdAsync(id);
+        [UseFiltering]
+        [UseSorting]
+        public async Task<Publicacion> GetPublicacionById(string id)
+        {
+            var publicacion = await _publicacionRepository.GetByIdAsync(id);
+            if (publicacion == null)
+            {
+                throw new Exception("Publicación no encontrada");
+            }
+
+            // Relacionar la ubicación usando el ID
+            if (!string.IsNullOrEmpty(publicacion.UbicacionId))
+            {
+                publicacion.Ubicacion = await _ubicacionRepository.GetByIdAsync(publicacion.UbicacionId);
+            }
+
+            return publicacion;
+        }
+
+
 
         public async Task<List<Publicacion>> GetPublicacionesByUsuarioId(string usuarioId) =>
             await _publicacionRepository.GetByUsuarioIdAsync(usuarioId);
@@ -390,5 +408,12 @@ namespace PetFinderAPI.Resolvers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        public async Task<Ubicacion?> GetUbicacion([Parent] Publicacion publicacion)
+        {
+            // Usa el UbicacionId de la publicación para buscar la ubicación asociada.
+            return await _ubicacionRepository.GetByIdAsync(publicacion.UbicacionId);
+        }
+
+
     }
 }

@@ -21,5 +21,7 @@ namespace PetFinderAPI.Models
         public string? Foto { get; set; } 
         public string? Descripcion { get; set; } 
         public DateTime FechaPublicacion { get; set; } = DateTime.UtcNow;
+
+        public Ubicacion? Ubicacion { get; set; }
     }
 }
