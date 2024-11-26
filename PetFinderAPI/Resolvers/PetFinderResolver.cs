@@ -82,9 +82,27 @@ namespace PetFinderAPI.Resolvers
         }
 
 
+        [UseFiltering]
+        [UseSorting]
+        public async Task<List<Publicacion>> GetPublicacionesByUsuarioId(string usuarioId)
+        {
+            var publicaciones = await _publicacionRepository.GetByUsuarioIdAsync(usuarioId);
+            if (publicaciones == null || !publicaciones.Any())
+            {
+                throw new Exception("No se encontraron publicaciones para el usuario");
+            }
 
-        public async Task<List<Publicacion>> GetPublicacionesByUsuarioId(string usuarioId) =>
-            await _publicacionRepository.GetByUsuarioIdAsync(usuarioId);
+            foreach (var publicacion in publicaciones)
+            {
+                if (!string.IsNullOrEmpty(publicacion.UbicacionId))
+                {
+                    publicacion.Ubicacion = await _ubicacionRepository.GetByIdAsync(publicacion.UbicacionId);
+                }
+            }
+
+            return publicaciones;
+        }
+
 
         [UseFiltering]
         [UseSorting]
