@@ -102,6 +102,33 @@ namespace PetFinderAPI.Resolvers
 
             return publicaciones;
         }
+        [UseFiltering]
+        [UseSorting]
+        public async Task<Ubicacion> GetUbicacionByPublicacionId(string publicacionId)
+        {
+            // Obtener la publicación por su ID
+            var publicacion = await _publicacionRepository.GetByIdAsync(publicacionId);
+            if (publicacion == null)
+            {
+                throw new Exception("Publicación no encontrada");
+            }
+
+            // Validar si tiene una ubicación asociada
+            if (string.IsNullOrEmpty(publicacion.UbicacionId))
+            {
+                throw new Exception("La publicación no tiene una ubicación asociada");
+            }
+
+            // Obtener la ubicación usando el UbicacionId de la publicación
+            var ubicacion = await _ubicacionRepository.GetByIdAsync(publicacion.UbicacionId);
+            if (ubicacion == null)
+            {
+                throw new Exception("Ubicación no encontrada");
+            }
+
+            return ubicacion;
+        }
+
 
 
         [UseFiltering]
@@ -128,6 +155,21 @@ namespace PetFinderAPI.Resolvers
         public async Task<Historial> GetHistorialById(string id) =>
             await _historialRepository.GetByIdAsync(id);
 
+        [UseFiltering]
+        [UseSorting]
+        public async Task<List<MascotaPropia>> GetMascotaByUsuarioId(string usuarioId)
+        {
+            var mascotas = await _mascotaRepository.GetAllAsync();
+            var mascotasUsuario = mascotas.Where(m => m.UsuarioId == usuarioId).ToList();
+
+            if (!mascotasUsuario.Any())
+            {
+                throw new Exception("No se encontraron mascotas para el usuario");
+            }
+
+            return mascotasUsuario;
+        }
+
         // --- Mutaciones ---
 
         public async Task<Usuario> CreateUsuario(UsuarioInput input)
@@ -145,7 +187,7 @@ namespace PetFinderAPI.Resolvers
             return usuario;
         }
 
-        public async Task<Usuario> UpdateUsuario(string id, UsuarioInput input)
+        public async Task<Usuario> UpdateUsuario([ID] string id, UsuarioInput input)
         {
             var existingUsuario = await _usuarioRepository.GetByIdAsync(id);
             if (existingUsuario == null)
@@ -167,6 +209,7 @@ namespace PetFinderAPI.Resolvers
             await _usuarioRepository.UpdateAsync(id, usuario);
             return usuario;
         }
+
 
         public async Task<bool> DeleteUsuario(string id)
         {
@@ -298,6 +341,35 @@ namespace PetFinderAPI.Resolvers
             await _ubicacionRepository.UpdateAsync(id, ubicacion);
             return ubicacion;
         }
+        public async Task<UbicacionWithPublicacion> GetUbicacionByPublicacion(string publicacionId)
+        {
+            // Obtener la publicación por su ID
+            var publicacion = await _publicacionRepository.GetByIdAsync(publicacionId);
+            if (publicacion == null)
+            {
+                throw new Exception("Publicación no encontrada");
+            }
+
+            // Obtener la ubicación asociada a la publicación
+            if (string.IsNullOrEmpty(publicacion.UbicacionId))
+            {
+                throw new Exception("La publicación no tiene una ubicación asociada");
+            }
+
+            var ubicacion = await _ubicacionRepository.GetByIdAsync(publicacion.UbicacionId);
+            if (ubicacion == null)
+            {
+                throw new Exception("Ubicación no encontrada");
+            }
+
+            // Retornar ambas entidades
+            return new UbicacionWithPublicacion
+            {
+                Ubicacion = ubicacion,
+                Publicacion = publicacion
+            };
+        }
+
 
         public async Task<bool> DeleteUbicacion(string id)
         {

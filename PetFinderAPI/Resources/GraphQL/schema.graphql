@@ -52,6 +52,10 @@ type Recordatorio {
   historialId: ID!
   historial: Historial
 }
+type UbicacionWithPublicacion {
+  ubicacion: Ubicacion!
+  publicacion: Publicacion!
+}
 
 type Historial {
   id: ID!
@@ -76,6 +80,7 @@ type Query {
   # Consultas para mascotas
   getMascotas: [MascotaPropia]!
   getMascotaById(id: ID!): MascotaPropia
+  getMascotaByUsuarioId(usuarioId: ID!): [MascotaPropia]!
 
   # Consultas para publicaciones
   getPublicaciones: [Publicacion]!
@@ -85,6 +90,7 @@ type Query {
   # Consultas para ubicaciones
   getUbicaciones: [Ubicacion]!
   getUbicacionById(id: ID!): Ubicacion
+  getUbicacionByPublicacionId(publicacionId: ID!): Ubicacion
 
   # Consultas para recordatorios
   getRecordatorios: [Recordatorio]!
@@ -119,6 +125,7 @@ type Mutation {
   createUbicacion(input: UbicacionInput!): Ubicacion!
   updateUbicacion(id: ID!, input: UbicacionInput!): Ubicacion!
   deleteUbicacion(id: ID!): Boolean!
+  ubicacionByPublicacion(publicacionId: ID!): UbicacionWithPublicacion
 
   # Mutaciones para recordatorios
   createRecordatorio(input: RecordatorioInput!): Recordatorio!

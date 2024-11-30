@@ -9,6 +9,17 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configuración de CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()  // Permite cualquier origen
+              .AllowAnyMethod()  // Permite cualquier método (GET, POST, etc.)
+              .AllowAnyHeader();  // Permite cualquier cabecera
+    });
+});
+
 builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
 {
     var connectionString = builder.Configuration.GetValue<string>("MongoDbSettings:ConnectionString");
@@ -45,10 +56,10 @@ builder.Services.AddScoped<PetFinderResolver>();
 
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType<PetFinderResolver>() 
-    .AddMutationType<PetFinderResolver>() 
-    .AddFiltering() 
-    .AddSorting(); 
+    .AddQueryType<PetFinderResolver>()
+    .AddMutationType<PetFinderResolver>()
+    .AddFiltering()
+    .AddSorting();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -56,6 +67,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Habilitar Swagger y SwaggerUI en desarrollo
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -64,12 +76,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseMiddleware<JwtMiddleware>();
+// Habilitar CORS antes del middleware de autorización
+app.UseCors("AllowAll");
 
+app.UseMiddleware<JwtMiddleware>();
 
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapGraphQL(); 
+app.MapGraphQL();
 
 app.Run();

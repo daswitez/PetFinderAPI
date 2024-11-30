@@ -26,6 +26,11 @@
 
         public async Task DeleteAsync(string id) =>
             await _mascotaPropia.DeleteOneAsync(m => m.Id == id);
+        public async Task<List<MascotaPropia>> GetByUsuarioIdAsync(string usuarioId)
+        {
+            return await _mascotaPropia.Find(m => m.UsuarioId == usuarioId).ToListAsync();
+        }
+
     }
 
 }
