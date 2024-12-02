@@ -91,6 +91,7 @@ type Query {
   getUbicaciones: [Ubicacion]!
   getUbicacionById(id: ID!): Ubicacion
   getUbicacionByPublicacionId(publicacionId: ID!): Ubicacion
+  getUbicacionesWithPublicaciones: [UbicacionWithPublicacion]!
 
   # Consultas para recordatorios
   getRecordatorios: [Recordatorio]!

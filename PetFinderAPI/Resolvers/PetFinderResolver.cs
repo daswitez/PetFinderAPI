@@ -106,20 +106,17 @@ namespace PetFinderAPI.Resolvers
         [UseSorting]
         public async Task<Ubicacion> GetUbicacionByPublicacionId(string publicacionId)
         {
-            // Obtener la publicación por su ID
             var publicacion = await _publicacionRepository.GetByIdAsync(publicacionId);
             if (publicacion == null)
             {
                 throw new Exception("Publicación no encontrada");
             }
 
-            // Validar si tiene una ubicación asociada
             if (string.IsNullOrEmpty(publicacion.UbicacionId))
             {
                 throw new Exception("La publicación no tiene una ubicación asociada");
             }
 
-            // Obtener la ubicación usando el UbicacionId de la publicación
             var ubicacion = await _ubicacionRepository.GetByIdAsync(publicacion.UbicacionId);
             if (ubicacion == null)
             {
@@ -128,6 +125,39 @@ namespace PetFinderAPI.Resolvers
 
             return ubicacion;
         }
+
+        [UseFiltering]
+        [UseSorting]
+        public async Task<List<UbicacionWithPublicacion>> GetUbicacionesWithPublicaciones()
+        {
+            var publicaciones = await _publicacionRepository.GetAllAsync();
+
+            if (publicaciones == null || !publicaciones.Any())
+            {
+                throw new Exception("No se encontraron publicaciones");
+            }
+
+            var ubicacionesWithPublicaciones = new List<UbicacionWithPublicacion>();
+
+            foreach (var publicacion in publicaciones)
+            {
+                if (!string.IsNullOrEmpty(publicacion.UbicacionId))
+                {
+                    var ubicacion = await _ubicacionRepository.GetByIdAsync(publicacion.UbicacionId);
+                    if (ubicacion != null)
+                    {
+                        ubicacionesWithPublicaciones.Add(new UbicacionWithPublicacion
+                        {
+                            Ubicacion = ubicacion,
+                            Publicacion = publicacion
+                        });
+                    }
+                }
+            }
+
+            return ubicacionesWithPublicaciones;
+        }
+
 
 
 
