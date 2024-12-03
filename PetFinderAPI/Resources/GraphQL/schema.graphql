@@ -15,19 +15,20 @@ type MascotaPropia {
   raza: String!
   sexo: String!
   usuarioId: ID!
-  usuario: Usuario! # Relación con Usuario
+  usuario: Usuario! 
 }
 
 type Publicacion {
   id: ID!
   usuarioId: ID!
   ubicacionId: ID!
-  estado: String # "Perdida", "Encontrada", "Adopción"
+  estado: String 
   nombre: String
   especie: String
   raza: String
   color: String
   tamanho: String
+  Telefono: String
   sexo: String
   foto: String
   descripcion: String
@@ -171,6 +172,7 @@ input PublicacionInput {
   color: String
   tamanho: String
   sexo: String
+  Telefono: String
   foto: String
   descripcion: String
 }

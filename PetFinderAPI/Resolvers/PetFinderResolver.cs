@@ -72,7 +72,6 @@ namespace PetFinderAPI.Resolvers
                 throw new Exception("Publicación no encontrada");
             }
 
-            // Relacionar la ubicación usando el ID
             if (!string.IsNullOrEmpty(publicacion.UbicacionId))
             {
                 publicacion.Ubicacion = await _ubicacionRepository.GetByIdAsync(publicacion.UbicacionId);
@@ -299,6 +298,7 @@ namespace PetFinderAPI.Resolvers
                 Tamanho = input.Tamanho,
                 Sexo = input.Sexo,
                 Foto = input.Foto,
+                Telefono = input.Telefono,
                 Descripcion = input.Descripcion,
                 UsuarioId = input.UsuarioId,
                 UbicacionId = input.UbicacionId,
@@ -327,6 +327,7 @@ namespace PetFinderAPI.Resolvers
                 Tamanho = input.Tamanho,
                 Sexo = input.Sexo,
                 Foto = input.Foto,
+                Telefono = input.Telefono,
                 Descripcion = input.Descripcion,
                 UsuarioId = input.UsuarioId,
                 UbicacionId = input.UbicacionId,
